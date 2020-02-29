@@ -10,29 +10,27 @@
 
 #include "utils.h"
 
-
 using namespace std;
 
 using entries_t = map<string, set<int>>;
-
-static entries_t words;
-static int cur_line_no = 0;
-
-static void add_word(string word) {
-  words[normalize(word)].insert(cur_line_no);
-}
 
 int main(int argc, char* argv[]) {
   ifstream fin;
   open_stream(argc, argv, fin);
   string line;
+  int cur_line_no = 0;
+  entries_t words;
+
   while (fin.good()) {
     cur_line_no++;
     getline(fin, line);
     istringstream line_stream(line);
     for_each(istream_iterator<string>(line_stream),
              istream_iterator<string>(),
-             add_word);
+             [cur_line_no, &words](string word)
+             {
+               words[normalize(word)].insert(cur_line_no);
+             });
   }
   fin.close();
 
