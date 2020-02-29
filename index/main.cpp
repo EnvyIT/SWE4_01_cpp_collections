@@ -26,6 +26,11 @@ int main(int argc , char * argv[]) {
   sort(begin(words),
        end(words));
 
+  cont_t::iterator new_end  = unique(begin(words),
+         end(words));
+  words.erase(new_end, 
+              end(words));
+
   copy(begin(words),
        end(words),
        ostream_iterator<string>(cout, ", "));
