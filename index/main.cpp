@@ -27,19 +27,17 @@ int main(int argc, char* argv[]) {
     istringstream line_stream(line);
     for_each(istream_iterator<string>(line_stream),
              istream_iterator<string>(),
-             [&](string word)
-             {
-               words[normalize(word)].insert(cur_line_no);
-             });
+             [&](string word) {words[normalize(word)].insert(cur_line_no);
+    });
   }
   fin.close();
 
 
-  for(const auto &entry : words) {
+  for (const auto& entry : words) {
     cout << setw(15) << entry.first
       << '(' << entry.second.size() << ") :";
-    copy(begin(entry.second), 
-         end(entry.second), 
+    copy(begin(entry.second),
+         end(entry.second),
          ostream_iterator<int>(cout, ", "));
     cout << endl;
   }
