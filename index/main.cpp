@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     istringstream line_stream(line);
     for_each(istream_iterator<string>(line_stream),
              istream_iterator<string>(),
-             [cur_line_no, &words](string word)
+             [&](string word)
              {
                words[normalize(word)].insert(cur_line_no);
              });
