@@ -13,12 +13,18 @@ using namespace std;
 int main(int argc , char * argv[]) {
   ifstream fin;
   open_stream(argc, argv, fin);
-  vector<string> words;
+  using cont_t = vector<string>;
+  // vector<string> words;
+  cont_t words;
   transform(istream_iterator<string>(fin), //string s ; fin >> s;
             istream_iterator<string>(), //end of any istream
-            back_insert_iterator<vector<string>>(words), //inserting into container via iterator
+            //back_insert_iterator<vector<string>>(words), //inserting into container via
+            back_inserter<vector<string>>(words),
             normalize);
   fin.close();
+
+  sort(begin(words),
+       end(words));
 
   copy(begin(words),
        end(words),
