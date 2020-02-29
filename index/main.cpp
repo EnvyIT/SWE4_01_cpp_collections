@@ -5,22 +5,21 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <map>
+#include <iomanip>
 
 #include "utils.h"
-#include "entry.h"
+
 
 using namespace std;
 
-using entry_t = entry<string, int>;
-using entries_t = set<entry_t>;
+using entries_t = map<string, set<int>>;
 
 static entries_t words;
 static int cur_line_no = 0;
 
 static void add_word(string word) {
-  entry_t e{ normalize(word) };
-  pair<entries_t::const_iterator, bool> result_pair = words.insert(e);
-  const_cast<entry_t&>(*result_pair.first).add_value(cur_line_no);
+  words[normalize(word)].insert(cur_line_no);
 }
 
 int main(int argc, char* argv[]) {
@@ -37,9 +36,15 @@ int main(int argc, char* argv[]) {
   }
   fin.close();
 
-  copy(begin(words),
-       end(words),
-       ostream_iterator<entry_t>(cout, "\n"));
+
+  for(const auto &entry : words) {
+    cout << setw(15) << entry.first
+      << '(' << entry.second.size() << ") :";
+    copy(begin(entry.second), 
+         end(entry.second), 
+         ostream_iterator<int>(cout, ", "));
+    cout << endl;
+  }
   cout << endl << words.size() << endl;
   return 0;
 }
