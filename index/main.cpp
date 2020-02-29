@@ -4,37 +4,42 @@
 #include <iterator>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 #include "utils.h"
 #include "entry.h"
 
 using namespace std;
 
-int main(int argc , char * argv[]) {
+using entry_t = entry<string, int>;
+using entries_t = set<entry_t>;
+
+static entries_t words;
+static int cur_line_no = 0;
+
+static void add_word(string word) {
+  entry_t e{ normalize(word) };
+  pair<entries_t::const_iterator, bool> result_pair = words.insert(e);
+  const_cast<entry_t&>(*result_pair.first).add_value(cur_line_no);
+}
+
+int main(int argc, char* argv[]) {
   ifstream fin;
   open_stream(argc, argv, fin);
-  // vector<string> words;
-  using cont_t = set<string>; // O(n*log(n)) which has a red-black tree as underlying impl.
-  cont_t words;
-  transform(istream_iterator<string>(fin), //string s ; fin >> s;
-            istream_iterator<string>(), //end of any istream
-            //back_insert_iterator<vector<string>>(words), //inserting into container via
-            // back_inserter(words),
-           inserter(words, begin(words)),
-            normalize);
+  string line;
+  while (fin.good()) {
+    cur_line_no++;
+    getline(fin, line);
+    istringstream line_stream(line);
+    for_each(istream_iterator<string>(line_stream),
+             istream_iterator<string>(),
+             add_word);
+  }
   fin.close();
-
-  /*sort(begin(words),
-       end(words));
-
-  cont_t::iterator new_end  = unique(begin(words),
-         end(words));
-  words.erase(new_end, 
-              end(words));*/
 
   copy(begin(words),
        end(words),
-       ostream_iterator<string>(cout, ", "));
+       ostream_iterator<entry_t>(cout, "\n"));
   cout << endl << words.size() << endl;
   return 0;
 }
